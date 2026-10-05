@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: socialapi-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: social_api
+      MYSQL_USER: ${MYSQL_USER:-socialapi}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-socialapi}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  app:
+    build: .
+    container_name: socialapi-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/social_api?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-socialapi}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-socialapi}
+      JWT_SECRET: ${JWT_SECRET:-a03b39ecac081995494742252843bdd77ec90f8f9aa1e278f52bde2053a6c82b}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+    ports:
+      - "8081:8080"
+volumes:
+  mysql_data:
