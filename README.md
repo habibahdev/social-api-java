@@ -5,6 +5,8 @@ Version Java de mon [API REST](https://github.com/habibahdev/social-api) dévelo
 
 ---
 
+![Home](docs/image/home.png)
+
 ## Démarrer
 
 ```bash
