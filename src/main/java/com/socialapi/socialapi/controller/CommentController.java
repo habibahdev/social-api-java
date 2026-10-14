@@ -30,7 +30,7 @@ public class CommentController {
     @Operation(summary = "Liste des commentaires d'un post")
     @ApiResponse(responseCode = "200", description = "Liste des commentaires")
     @ApiResponse(responseCode = "404", description = "Post introuvable")
-    @GetMapping("/post/{postId}/comments")
+    @GetMapping("/posts/{postId}/comments")
     public List<CommentDto> collection(
             @Parameter(description = "Identifiant du post parent") @PathVariable Long postId) {
         return commentService.findByPost(postId);
